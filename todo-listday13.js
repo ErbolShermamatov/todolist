@@ -1,6 +1,15 @@
 const taskForm = document.getElementById('task-form');
 const taskInput = document.getElementById('task-input'); 
 const taskList = document.getElementById('task-list');
+const darkModeBtn = document.getElementById('theme-toggle');
+
+const loadTheme = () => {
+    if(localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        darkModeBtn.textContent = "☀️";
+    }
+}
+loadTheme();
 
 const saveData = () => {
     //Мы берем весь HTML, который есть сейчас внутри <ul>, и сохраняем его, как строку
@@ -16,6 +25,19 @@ const loadData = () => {
     }
 }
 
+darkModeBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    if(document.body.classList.contains('dark-mode')) {
+        darkModeBtn.style.background = '#fff';
+        localStorage.setItem('theme', 'dark');
+        darkModeBtn.textContent = "☀️";
+    }
+    else {
+        darkModeBtn.textContent = "🌙";
+        darkModeBtn.style.background = '#333';
+        localStorage.setItem('theme', 'light');
+    }
+})
 taskForm.addEventListener('submit', (e) => {
     e.preventDefault();
     let inputText = taskInput.value; //сохраняем в переменную inputText, то что ввел пользователь
