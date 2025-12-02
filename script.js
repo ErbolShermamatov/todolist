@@ -1,10 +1,10 @@
 const taskForm = document.getElementById('task-form');
-const taskInput = document.getElementById('task-input'); 
+const taskInput = document.getElementById('task-input');
 const taskList = document.getElementById('task-list');
 const darkModeBtn = document.getElementById('theme-toggle');
 
 const loadTheme = () => {
-    if(localStorage.getItem('theme') === 'dark') {
+    if (localStorage.getItem('theme') === 'dark') {
         document.body.classList.add('dark-mode');
         darkModeBtn.textContent = "☀️";
         darkModeBtn.style.background = '#fff';
@@ -21,14 +21,14 @@ const loadData = () => {
     //Вызываем сохраненную строку
     const savedHtml = localStorage.getItem("todoData");
     //Если там что-то есть - вставляем обратно в <ul>
-    if(savedHtml) {
+    if (savedHtml) {
         taskList.innerHTML = savedHtml;
     }
 }
 
 darkModeBtn.addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
-    if(document.body.classList.contains('dark-mode')) {
+    if (document.body.classList.contains('dark-mode')) {
         localStorage.setItem('theme', 'dark');
         darkModeBtn.textContent = "☀️";
         darkModeBtn.style.background = '#fff';
@@ -42,12 +42,12 @@ darkModeBtn.addEventListener('click', () => {
 taskForm.addEventListener('submit', (e) => {
     e.preventDefault();
     let inputText = taskInput.value; //сохраняем в переменную inputText, то что ввел пользователь
-    if(inputText === '') { //проверяем, если пользователь ввел пустую строку, то мы не добавляем его
+    if (inputText === '') { //проверяем, если пользователь ввел пустую строку, то мы не добавляем его
         return
     }
     const newLi = document.createElement('li'); //создаем элемент списка
     newLi.classList.add('task'); ////добавили класс
-    newLi.textContent = inputText; 
+    newLi.textContent = inputText;
     const deleteButton = document.createElement('button'); //создаем кнопку
     deleteButton.classList.add('delete-btn'); //добавили класс к кнопке
     deleteButton.textContent = 'Удалить';
@@ -55,13 +55,13 @@ taskForm.addEventListener('submit', (e) => {
     taskList.append(newLi); //и помещаем этот li в ul. и получается, что ul будет его родителем
     saveData(); //Вызываем эту функцию, тогда когда список меняется!
     taskInput.value = ''; //очистили поле ввода
-}) 
+})
 
 taskList.addEventListener('click', (event) => {
     if (event.target.classList.contains('delete-btn')) {
         event.target.parentElement.remove()
     }
-    else if (event.target.classList.contains('task')){
+    else if (event.target.classList.contains('task')) {
         event.target.classList.toggle('done')
     }
     saveData(); //Вызываем эту функцию, тогда когда список меняется!
@@ -69,3 +69,72 @@ taskList.addEventListener('click', (event) => {
 
 //Вызываем loadData() в самом низу файла, чтобы при открытии сайта задачи сразу появились
 loadData();
+
+
+/*
+То что мы сделали сейчас, а именно сохранение текущего innerHTML taskList в localStorage для моего уровня это нормально
+Он простой, он работает и сохраняет состояние.
+
+Но есть причина почему профессионалы, так никогда не делают в больших проектах.
+
+Аналогия: "Список продуктов"
+Твой текущий метод (innerHTML): Ты написал список покупок на бумажке. Чтобы сохранить его, ты сфотографировал бумажку на телефон.
+    Плюс: Быстро. Картинка есть.
+    Минус: Если ты хочешь вычеркнуть "Молоко", тебе нужно распечатать фото, зачеркнуть и сфотографировать снова.
+        Если ты хочешь посчитать сумму товаров или отсортировать по алфавиту - ты не можешь, это просто "глупая картинка" ("Строка текста") 
+
+ПРОФЕССИОНАЛЬНЫЙ МЕТОД (массив объектов): Ты ведешь список в Excel или Заметках.
+
+    Плюс: Ты хранишь данные. Ты можешь в один клик отсортировать их по цене. Ты можешь скрыть
+    все купленные товары. Ты можешь посчитать общую сумму.
+
+    Минус: сложнее настроить в начале.
+*/
+
+/*
+    3 Причины, почему "Массив объектов" круче
+    
+    1. Разделение Данных и Картинки (Data vs View)
+    Сейчас твой HTML — это и есть твоя база данных. Представь, что заказчик скажет: "Эрбол, добавь функцию: показывать только НЕвыполненные задачи".
+        С innerHTML: Тебе придется лезть в строку HTML, искать там классы done, вырезать эти куски текста... Это ад.
+        С Массивом: Ты просто делаешь todos.filter(t => t.done === false) и отрисовываешь результат. Это одна строчка кода.
+    
+    2. Безопасность (XSS атаки)
+    Это важно. Если пользователь введет в твой инпут такой текст: <img src=xoneerror=alert('Hacked')>,
+    то при сохранении через innerHTML этот код может выполниться в браузере. Массивы объектов и создание элементов через createElement
+    защищает от этого, так как текст воспринимается, как текст, а не как HTML-код
+
+    3. Это фундамент React
+    React работает ИСКЛЮЧИТЕЛЬНО на массивах объектов. В React ты никогда не трогаешь innerHTML.
+    Ты меняешь данные в массиве, а React сам перерисовывает страницу.
+*/
+
+/*
+
+То есть у нас все сейчас работает на innerHTML. А именно методы saveData и loadData
+То есть мы сохраняем текущий taskList.innerHTML в localStorage и перезагрузки страницы мы берем этот innerHTML с localStorage
+и вставляем его в пустой taskList и у нас будет то же самое до перезагрузки страницы
+
+
+Сейчас (Нынешний метод):
+    1. Мы создаем задачу -> она сразу становится <li> (HTML-тегом)
+    2. saveData берет этот HTML (<li>Купить хлеб</li>) и тупо сохраняет его как текст.
+    3. Твой сайт "помнит" только внешний вид. Он не знает, что у задачи его текст "Купить хлеб". Он просто знает кусок HTML-кода (<li>Купить хлеб</li>)
+
+
+Хардкорный уровень (Метод профи):
+    1. Мы создаем невидимый список в JS (Массив):
+    let todod = [
+        {text: "Купить хлеб", done: false}
+        {text: "Поспать", done: true}
+    ];
+
+    2. saveData сохраняет не HTML, а этот массив данных (JSON.stringify).
+    3. А HTML (<li>...<li>) мы строим заново из этого массива каждый раз.
+ */
+
+/*
+Этот метод нужен для React. Ведь в React и во всех современным фрейворках ЗАПРЕЩЕНО сохранять HTML.
+Там мы просто сохраняем только данные (массивы, объекты).
+
+*/
