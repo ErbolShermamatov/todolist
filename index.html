@@ -1,120 +1,22 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>Todo List</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            background: #f4f4f4;
-            color: #333;
-            transition: 0.3s; /*Плавный переход*/
-        }
-
-        .container {
-            max-width: 500px;
-            margin: 30px auto;
-            background: #fff;
-            padding: 20px;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        #theme-toggle {
-            padding: 5px;
-            background: #333;
-            border-radius: 10px;
-        }
-        h1 {
-            text-align: center;
-        }
-
-        #task-form {
-            display: flex;
-            gap: 5px;
-        }
-
-        #task-input {
-            flex-grow: 1;
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid #ccc;
-        }
-
-        #task-form button {
-            padding: 10px 15px;
-            border-radius: 10px;
-            background: #007bff;
-            color: white;
-            border: none;
-        }
-
-        #task-list {
-            list-style: none;
-            padding: 0;
-            margin-top: 20px;
-            border-radius: 10px;
-        }
-
-        .task {
-            padding: 10px;
-            background: #eee;
-            border-radius: 10px;
-            margin-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .task.done {
-            text-decoration: line-through;
-            color: #888;
-        }
-
-        .delete-btn {
-            background: #dc3545;
-            border-radius: 10px;
-            color: white;
-            border: none;
-            padding: 5px 8px;
-            cursor: pointer;
-        }
-        /*Стили для темной темы: */
-        body.dark-mode {
-            background: #222;
-            color: #fff;
-        }
-
-        /*Нужно адаптировать контейнер и инпуты*/
-        body.dark-mode .container {
-            background: #333;
-            color: #fff;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-        }
-        body.dark-mode input {
-            background: #444;
-            color: #fff;
-            border-color: #555;
-        }
-        body.dark-mode ul li {
-            background: #555;
-            color: #fff;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-do List</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="container">
         <div class="header">
-            <h1>Мой список дел</h1>
+            <h1>My To-do list</h1>
             <button id="theme-toggle">🌙</button>
         </div>
         <form id="task-form">
-            <input type="text" id="task-input" placeholder="Добавить новую задачу..." required>
-            <button type="submit">Добавить</button>
+            <input type="text" id="task-input" placeholder="Add new task..." required>
+            <button type="submit">Add</button>
         </form>
 
         <ul id="task-list">
