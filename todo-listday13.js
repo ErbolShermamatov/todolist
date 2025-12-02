@@ -7,6 +7,7 @@ const loadTheme = () => {
     if(localStorage.getItem('theme') === 'dark') {
         document.body.classList.add('dark-mode');
         darkModeBtn.textContent = "☀️";
+        darkModeBtn.style.background = '#fff';
     }
 }
 loadTheme();
@@ -28,9 +29,9 @@ const loadData = () => {
 darkModeBtn.addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
     if(document.body.classList.contains('dark-mode')) {
-        darkModeBtn.style.background = '#fff';
         localStorage.setItem('theme', 'dark');
         darkModeBtn.textContent = "☀️";
+        darkModeBtn.style.background = '#fff';
     }
     else {
         darkModeBtn.textContent = "🌙";
