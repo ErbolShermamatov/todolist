@@ -1,7 +1,9 @@
 const taskForm = document.getElementById('task-form');
 const taskInput = document.getElementById('task-input');
 const taskList = document.getElementById('task-list');
-const darkModeBtn = document.getElementById('theme-toggle');
+const darkModeBtn = document.getElementById('theme-toggle')
+
+let todos = JSON.parse(localStorage.getItem('todos')) || [];
 
 const loadTheme = () => {
     if (localStorage.getItem('theme') === 'dark') {
@@ -11,17 +13,6 @@ const loadTheme = () => {
     }
 }
 loadTheme();
-
-const saveData = () => {
-    localStorage.setItem('todoData', taskList.innerHTML);
-}
-
-const loadData = () => {
-    const savedHtml = localStorage.getItem("todoData");
-    if (savedHtml) {
-        taskList.innerHTML = savedHtml;
-    }
-}
 
 darkModeBtn.addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
@@ -36,34 +27,71 @@ darkModeBtn.addEventListener('click', () => {
         localStorage.setItem('theme', 'light');
     }
 })
+
+const renderTodos = () => {
+    taskList.innerHTML = '';
+
+    todos.forEach((task) => {
+        const li = document.createElement('li');
+        li.classList.add('task');
+
+        if(task.done) {
+            li.classList.add('done');
+        }
+
+        li.setAttribute('data-id', task.id);
+        li.textContent = task.text;
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.classList.add('delete-btn');
+        deleteBtn.textContent = 'Удалить';
+
+        li.append(deleteBtn);
+        taskList.append(li);
+    })
+}
+
 taskForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    let inputText = taskInput.value;
-    if (inputText === '') {
-        return
+    if(taskInput.value === '') { 
+        return;
     }
-    const newLi = document.createElement('li');
-    newLi.classList.add('task');
-    newLi.textContent = inputText;
-    const deleteButton = document.createElement('button');
-    deleteButton.classList.add('delete-btn');
-    deleteButton.textContent = 'Удалить';
-    newLi.append(deleteButton);
-    taskList.append(newLi);
-    saveData();
-    taskInput.value = ''; 
-})
 
-taskList.addEventListener('click', (event) => {
-    if (event.target.classList.contains('delete-btn')) {
-        event.target.parentElement.remove()
+    const newTask = {
+        id: Date.now(),
+        text: taskInput.value,
+        done: false
+    };
+
+    todos.push(newTask);
+
+    saveToLocalStorage();
+    renderTodos();
+
+    taskInput.value = '';
+});
+
+
+taskList.addEventListener('click', (e) => {
+    if(!e.target.classList.contains('delete-btn') && !e.target.classList.contains('task')) {
+        return;
     }
-    else if (event.target.classList.contains('task')) {
-        event.target.classList.toggle('done')
+    const parentLi = e.target.closest('li');
+    const id = Number(parentLi.getAttribute('data-id')); 
+
+    if(e.target.classList.contains('delete-btn')) {
+        todos = todos.filter(task => task.id !== id);
     }
-    saveData();
-})
 
-loadData();
+    else if(e.target.classList.contains('task')) {
+        const task = todos.find(t => t.id === id);
+        task.done = !task.done;
+    }
+    saveToLocalStorage();
+    renderTodos();
+});
 
-
+const saveToLocalStorage = () => {
+    localStorage.setItem('todos', JSON.stringify(todos));
+}
+renderTodos();
